@@ -1,0 +1,26 @@
+{
+  "name": "homework",
+  "version": "1.0.0",
+  "description": "homework package for bamazon",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BIMATN/bamazon.git"
+  },
+  "keywords": [
+    "bamazon"
+  ],
+  "author": "ben rodriguez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BIMATN/bamazon/issues"
+  },
+  "homepage": "https://github.com/BIMATN/bamazon#readme",
+  "dependencies": {
+    "inquirer": "^3.3.0",
+    "mysql": "^2.15.0"
+  }
+}
