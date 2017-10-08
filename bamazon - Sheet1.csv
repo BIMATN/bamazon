@@ -1,0 +1,11 @@
+item_id,product_name,department_name,price,quantity_stock
+1,omni-gel,materials,14,10
+2,health-gel,wellness,18,8
+3,food-gel,nutrition,21,91
+4,waste cleaner,purification,45,14
+5,air scrubber,purification,45,64
+6,liquid distiller,purification,50,20
+7,herodium,fuel,25,27
+8,candy unicorn,supplements,5,910
+9,plush pillow,bedding,75,11
+10,navigation software,travel,240,6
