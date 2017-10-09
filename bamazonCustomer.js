@@ -14,52 +14,73 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
 	if (err) throw err;
 	console.log("Customer Connection: " + connection.threadId);
-	showInventory();
-	inquirePurchase();
+	bamazonRun();
 	//connection.end();
 });
 
-function inquirePurchase(){
+function bamazonRun(){
 	inquirer.prompt([
 		{
-			type: "checkbox",
-		    name: "itemSelection",
-		    message: "Please Select An Item to Purchase",
-		    choices: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-		},
-				{
-			type: "input",
-		    name: "quantity",
-		    message: "How many would you like? [Enter a number]",
+			type: 'password',
+			name: 'administrator',
+			message: 'Administrator? Enter Password:'
 		}
 	]).then(function(choice){
-		console.log(choice.itemSelection[0]);
-		console.log(choice.quantity);
-		inventoryCheck(choice);
+		if(choice.administrator === 'bamazon'){
+			//code for administrator functions
+			console.log('you are in the admin section');
+		}
+		else{
+			showInventory();
+		};
+	}).then(function(choice){
+		inquirer.prompt([
+			{
+				type: "list",
+			    name: "itemSelection",
+			    message: "Please Select An Item to Purchase",
+			    choices: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+			},
+			{
+				type: "input",
+			    name: "quantity",
+			    message: "How many would you like? [Enter a number]"
+			}
+		]).then(function(choice){
+			if (typeof(choice.quantity) === 'number'){
+				let custChoice = parseInt(choice.itemSelection[0]);
+				let custQty = parseInt(choice.quantity);
+				// console.log('You have made this choice: '+custChoice);
+				// console.log('You have chose this many items: '+custQty);
+				inventoryCheck(custChoice, custQty);
+			}
+			else console.log('You have not entered a quantifiable value for how many items you want. Please begin again. Thank you!');
 		});
+	});
 }
 
 function showInventory() {
 	var query = connection.query("SELECT * FROM products", function(err, res) {
 		for (var i = 0; i < res.length; i++) {
-			console.log('_________________________________________________________________________________');
+			console.log('---------------------------------------------------------------------------------');
 			console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price+ ' Credits');
-			console.log('_________________________________________________________________________________');
+			console.log('---------------------------------------------------------------------------------');
 		};
 	});
 }
 
-function inventoryCheck(choice){
-	var query = connection.query("SELECT stock_quantity AND price FROM products WHERE item_id=?",[parseInt(choice.itemSelection[0])], function(err, res) {
-		console.log(choice.itemSelection[0]);
+function inventoryCheck(customerChoice, customerQuantity){
+	var query = connection.query("SELECT stock_quantity, price FROM products WHERE item_id=?",[customerChoice], function(err, res) {
+		console.log(res);
+		/*console.log(choice.itemSelection[0]);
 		console.log(res[0].stock_quantity);
-		console.log(res[0].price);
+		console.log(res[0].price);*/
 		if(err) throw err;
-		if(res[0].stock_quantity>choice.quantity){
-			let newStock = res[0].stock_quantity;
-			newStock-=choice.quantity;
-			let price = res[0].price;
-			updateQuantity(choice, newStock, price);
+		let presentStock = res[0].stock_quantity;
+		let price = res[0].price;
+		if(presentStock>customerQuantity){
+			presentStock-=customerQuantity;
+			updateQuantity(customerChoice, customerQuantity, presentStock, price);
 		}
 		else{
 			console.log('There is not enough inventory to perform your purchase, please try again later. Thank you for your patronage.')
@@ -70,22 +91,22 @@ function inventoryCheck(choice){
 	});	
 }
 
-function updateQuantity(choice, stock, price) {
+function updateQuantity(customerChoice, customerQuantity, presentStock, price) {
   console.log("Calculating Purchase...\n");
   var query = connection.query(
     "UPDATE products SET ? WHERE ?",
     [
 	    {
-	    	stock_quantity: stock
+	    	stock_quantity: presentStock
 	    },
 	    {
-	    	item_id: choice.itemSelection[0]
+	    	item_id: customerChoice
 	    }
     ],
     function(err, res) {
     	if(err) throw (err);
-    	let total = choice.quantity*price;
-      	console.log('Your total purchase cost: ' + total);
+    	let total = customerQuantity*price;
+      	console.log('Your total purchase cost: ' + total + ' Units');
       	console.log('Thank you for your purchase!');
     }
   );
