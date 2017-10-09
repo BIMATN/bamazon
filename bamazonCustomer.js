@@ -47,7 +47,7 @@ function bamazonRun(){
 			    message: "How many would you like? [Enter a number]"
 			}
 		]).then(function(choice){
-			if (typeof(parseInt(choice.quantity)) === 'number'){
+			if (typeof(parseInt(choice.quantity)) === 'number' && parseInt(choice.quantity)>0){
 				let custChoice = parseInt(choice.itemSelection[0]);
 				let custQty = parseInt(choice.quantity);
 				// console.log('You have made this choice: '+custChoice);
@@ -55,6 +55,7 @@ function bamazonRun(){
 				inventoryCheck(custChoice, custQty);
 			}
 			else console.log('You have not entered a quantifiable value for how many items you want. Please begin again. Thank you!');
+			connection.end();
 		});
 	});
 }
@@ -71,7 +72,6 @@ function showInventory() {
 
 function inventoryCheck(customerChoice, customerQuantity){
 	var query = connection.query("SELECT stock_quantity, price FROM products WHERE item_id=?",[customerChoice], function(err, res) {
-		console.log(res);
 		/*console.log(choice.itemSelection[0]);
 		console.log(res[0].stock_quantity);
 		console.log(res[0].price);*/
@@ -84,10 +84,8 @@ function inventoryCheck(customerChoice, customerQuantity){
 		}
 		else{
 			console.log('There is not enough inventory to perform your purchase, please try again later. Thank you for your patronage.')
+			connection.end();
 		}
-		/*for (var i = 0; i < res.length; i++) {
-		console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price+ ' Credits');
-		console.log('_________________________________________________________________________________');}*/
 	});	
 }
 
@@ -108,6 +106,7 @@ function updateQuantity(customerChoice, customerQuantity, presentStock, price) {
     	let total = customerQuantity*price;
       	console.log('Your total purchase cost: ' + total + ' Units');
       	console.log('Thank you for your purchase!');
+      	connection.end();
     }
   );
 }
