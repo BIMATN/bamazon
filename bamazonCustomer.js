@@ -47,7 +47,7 @@ function bamazonRun(){
 			    message: "How many would you like? [Enter a number]"
 			}
 		]).then(function(choice){
-			if (typeof(choice.quantity) === 'number'){
+			if (typeof(parseInt(choice.quantity)) === 'number'){
 				let custChoice = parseInt(choice.itemSelection[0]);
 				let custQty = parseInt(choice.quantity);
 				// console.log('You have made this choice: '+custChoice);
