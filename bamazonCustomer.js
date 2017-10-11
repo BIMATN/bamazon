@@ -14,9 +14,10 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
 	if (err) throw err;
 	console.log("Customer Connection: " + connection.threadId);
-	bamazonRun();
-	//connection.end();
 });
+
+showInventory();
+setTimeout(function(){bamazonRun()}, 1000);
 
 function bamazonRun(){
 	inquirer.prompt([
@@ -25,15 +26,7 @@ function bamazonRun(){
 			name: 'administrator',
 			message: 'Administrator? Enter Password:'
 		}
-	]).then(function(choice){
-		if(choice.administrator === 'bamazon'){
-			//code for administrator functions
-			console.log('you are in the admin section');
-		}
-		else{
-			showInventory();
-		};
-	}).then(function(choice){
+	]).then(function(){
 		inquirer.prompt([
 			{
 				type: "list",
@@ -50,12 +43,12 @@ function bamazonRun(){
 			if (typeof(parseInt(choice.quantity)) === 'number' && parseInt(choice.quantity)>0){
 				let custChoice = parseInt(choice.itemSelection[0]);
 				let custQty = parseInt(choice.quantity);
-				// console.log('You have made this choice: '+custChoice);
-				// console.log('You have chose this many items: '+custQty);
 				inventoryCheck(custChoice, custQty);
 			}
-			else console.log('You have not entered a quantifiable value for how many items you want. Please begin again. Thank you!');
-			connection.end();
+			else {
+				console.log('You have not entered a quantifiable value for how many items you want. Please begin again. Thank you!');
+				connection.end();
+			};
 		});
 	});
 }
